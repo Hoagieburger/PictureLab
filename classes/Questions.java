@@ -26,6 +26,8 @@ public class Questions
        * 6) Left to right
        * 7) Yes. 
     * A5
+       * 1) Yes.
+       * 2) Yes.
        * 
     */
 }

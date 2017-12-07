@@ -28,6 +28,10 @@ public class Questions
     * A5
        * 1) Yes.
        * 2) Yes.
-       * 
+       * 3) Yes.
+       * 4) Yes.
+       * 5) Yes.
+       * 6) Yes.
+       * 7) Yes.
     */
 }

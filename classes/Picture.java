@@ -197,6 +197,37 @@ public class Picture extends SimplePicture
             }
         }
     }
+    public void mirrorArms(){
+        Pixel[][] pixels = this.getPixels2D();
+        Pixel topPixel = null;
+        Pixel bottomPixel = null;
+        for (int row = 160; row < 190; row++){
+            for (int col = 100; col < 170; col++){
+                topPixel = pixels[row][col];
+                bottomPixel = pixels[row + 70][col - 7];
+                bottomPixel.setColor(topPixel.getColor());
+            }
+        }
+        for (int row = 170; row < 195; row++){
+            for (int col = 238; col < 293; col++){
+                topPixel = pixels[row][col];
+                bottomPixel = pixels[row + 68][col + 6];
+                bottomPixel.setColor(topPixel.getColor());
+            }
+        }
+    }
+    public void mirrorGull(){
+        Pixel[][] pixels = this.getPixels2D();
+        Pixel leftPixel = null;
+        Pixel rightPixel = null;
+        for (int row = 234; row < 323; row++){
+            for (int col = 238; col < 342; col++){
+                leftPixel = pixels[row][col];
+                rightPixel = pixels[row][col + 200];
+                rightPixel.setColor(leftPixel.getColor());
+            }
+        }
+    }
     /** Mirror just part of a picture of a temple */
     public void mirrorTemple()
     {
@@ -212,13 +243,14 @@ public class Picture extends SimplePicture
             // loop from 13 to just before the mirror point
             for (int col = 13; col < mirrorPoint; col++)
             {
-
+                count++;
                 leftPixel = pixels[row][col];      
                 rightPixel = pixels[row]                       
                 [mirrorPoint - col + mirrorPoint];
                 rightPixel.setColor(leftPixel.getColor());
             }
         }
+        System.out.println(count);
     }
 
     /** copy from the passed fromPic to the
@@ -268,7 +300,20 @@ public class Picture extends SimplePicture
         this.mirrorVertical();
         this.write("collage.jpg");
     }
-
+    public void createCollage(int startRow, int endRow, int startCol, int endCol){
+        Picture flower1 = new Picture("flower1.jpg");
+        Picture flower2 = new Picture("flower2.jpg");
+        this.copy(flower1,0,0);
+        this.copy(flower2,100,0);
+        this.copy(flower1,200,0);
+        Picture flowerNoBlue = new Picture(flower2);
+        flowerNoBlue.zeroBlue();
+        this.copy(flowerNoBlue,300,0);
+        this.copy(flower1,400,0);
+        this.copy(flower2,500,0);
+        this.mirrorVertical();
+        this.write("collage.jpg");
+    }
     /** Method to show large changes in color 
      * @param edgeDist the distance for finding edges
      */

@@ -261,20 +261,20 @@ public class Picture extends SimplePicture
      * @param startCol the start col to copy to
      */
     public void copy(Picture fromPic, 
-    int startRow, int startCol)
+    int startRow, int startCol, int endRow, int endCol)
     {
         Pixel fromPixel = null;
         Pixel toPixel = null;
         Pixel[][] toPixels = this.getPixels2D();
         Pixel[][] fromPixels = fromPic.getPixels2D();
         for (int fromRow = 0, toRow = startRow; 
-        fromRow < fromPixels.length &&
-        toRow < toPixels.length; 
+        fromRow < endRow &&
+        toRow < endRow; 
         fromRow++, toRow++)
         {
             for (int fromCol = 0, toCol = startCol; 
-            fromCol < fromPixels[0].length &&
-            toCol < toPixels[0].length;  
+            fromCol < endCol &&
+            toCol < endCol;  
             fromCol++, toCol++)
             {
                 fromPixel = fromPixels[fromRow][fromCol];
@@ -289,28 +289,48 @@ public class Picture extends SimplePicture
     {
         Picture flower1 = new Picture("flower1.jpg");
         Picture flower2 = new Picture("flower2.jpg");
-        this.copy(flower1,0,0);
-        this.copy(flower2,100,0);
-        this.copy(flower1,200,0);
+        Pixel[][] pixels = this.getPixels2D();
+        this.copy(flower1,0,0,pixels.length,pixels[0].length);
+        this.copy(flower2,100,0,pixels.length,pixels[0].length);
+        this.copy(flower1,200,0,pixels.length,pixels[0].length);
         Picture flowerNoBlue = new Picture(flower2);
         flowerNoBlue.zeroBlue();
-        this.copy(flowerNoBlue,300,0);
-        this.copy(flower1,400,0);
-        this.copy(flower2,500,0);
+        this.copy(flowerNoBlue,300,0,pixels.length,pixels[0].length);
+        this.copy(flower1,400,0,pixels.length,pixels[0].length);
+        this.copy(flower2,500,0,pixels.length,pixels[0].length);
         this.mirrorVertical();
         this.write("collage.jpg");
     }
-    public void createCollage(int startRow, int endRow, int startCol, int endCol){
+    public void myCollage(){
         Picture flower1 = new Picture("flower1.jpg");
         Picture flower2 = new Picture("flower2.jpg");
-        this.copy(flower1,0,0);
-        this.copy(flower2,100,0);
-        this.copy(flower1,200,0);
+        Picture snowman = new Picture("snowman.jpg");
+        Pixel[][] pixels = this.getPixels2D();
+        this.copy(flower1,0,0,pixels.length,pixels[0].length);
+        this.copy(flower2,100,0,pixels.length,pixels[0].length);
+        this.copy(snowman,200,0,pixels.length,pixels[0].length);
         Picture flowerNoBlue = new Picture(flower2);
         flowerNoBlue.zeroBlue();
-        this.copy(flowerNoBlue,300,0);
-        this.copy(flower1,400,0);
-        this.copy(flower2,500,0);
+        Picture doubleArms = new Picture(snowman);
+        doubleArms.mirrorArms();
+        this.copy(flowerNoBlue,300,0,pixels.length,pixels[0].length);
+        this.copy(doubleArms,400,0,pixels.length,pixels[0].length);
+        this.copy(flower2,500,0,pixels.length,pixels[0].length);
+        this.mirrorVertical();
+        this.write("collage.jpg");
+    }
+    public void createCollageParameters(int startRow, int endRow, int startCol, int endCol){
+        Picture flower1 = new Picture("flower1.jpg");
+        Picture flower2 = new Picture("flower2.jpg");
+        Pixel[][] pixels = this.getPixels2D();
+        this.copy(flower1,startRow,startCol,endRow,endCol);
+        this.copy(flower2,100,0,pixels.length,pixels[0].length);
+        this.copy(flower1,200,0,pixels.length,pixels[0].length);
+        Picture flowerNoBlue = new Picture(flower2);
+        flowerNoBlue.zeroBlue();
+        this.copy(flowerNoBlue,300,0,pixels.length,pixels[0].length);
+        this.copy(flower1,400,0,pixels.length,pixels[0].length);
+        this.copy(flower2,500,0,pixels.length,pixels[0].length);
         this.mirrorVertical();
         this.write("collage.jpg");
     }
@@ -339,7 +359,61 @@ public class Picture extends SimplePicture
             }
         }
     }
-
+    public void edgeDetectionTopToBottom(int edgeDist){
+        Pixel topPixel = null;
+        Pixel bottomPixel = null;
+        Pixel[][] pixels = this.getPixels2D();
+        Color bottomColor = null;
+        for (int row = 0; row < pixels.length-1; row++)
+        {
+            for (int col = 0; 
+            col < pixels[0].length; col++)
+            {
+                topPixel = pixels[row][col];
+                bottomPixel = pixels[row+1][col];
+                bottomColor = bottomPixel.getColor();
+                if (topPixel.colorDistance(bottomColor) > 
+                edgeDist)
+                    topPixel.setColor(Color.BLACK);
+                else
+                    topPixel.setColor(Color.WHITE);
+            }
+        }
+    }
+    public void myEdgeDetection(int edgeDist){
+        Pixel curPixel = null;
+        Pixel rightPixel = null;
+        Pixel bottomPixel = null;
+        Pixel[][] pixels = this.getPixels2D();
+        Color rightColor = null;
+        Color bottomColor = null;
+        for (int row = 0; row < pixels.length-1; row++){
+            for (int col = 0; col < pixels[0].length-1; col++){
+                curPixel = pixels[row][col];
+                bottomPixel = pixels[row+1][col];
+                rightPixel = pixels[row][col+1];
+                bottomColor = bottomPixel.getColor();
+                rightColor = rightPixel.getColor();
+                if (curPixel.colorDistance(rightColor) > edgeDist && curPixel.colorDistance(bottomColor) > edgeDist){
+                    curPixel.setColor(Color.BLACK);
+                }else if (curPixel.colorDistance(rightColor) > edgeDist || curPixel.colorDistance(bottomColor) > edgeDist){
+                    curPixel.setColor(Color.GRAY);
+                }else{
+                    curPixel.setColor(Color.WHITE);
+                }
+            }
+        }
+        for (int col = 0; col < pixels[0].length-1; col++){
+            curPixel = pixels[pixels.length-1][col];
+            rightPixel = pixels[pixels.length-1][col+1];
+            rightColor = rightPixel.getColor();
+            if (curPixel.colorDistance(rightColor) > edgeDist){
+                curPixel.setColor(Color.BLACK);
+            }else{
+                curPixel.setColor(Color.WHITE);
+            }
+        }
+    }
     /* Main method for testing - each class in Java can have a main 
      * method 
      */

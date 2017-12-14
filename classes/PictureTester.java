@@ -95,7 +95,16 @@ public class PictureTester
         canvas.createCollage();
         canvas.explore();
     }
-
+    public static void testCollageParameters(int startRow, int startCol, int endRow, int endCol){
+        Picture canvas = new Picture("640x480.jpg");
+        canvas.createCollageParameters(startRow, startCol, endRow, endCol);
+        canvas.explore();
+    }
+    public static void testMyCollage(){
+        Picture canvas = new Picture("640x480.jpg");
+        canvas.myCollage();
+        canvas.explore();
+    }
     /** Method to test edgeDetection */
     public static void testEdgeDetection()
     {
@@ -103,7 +112,16 @@ public class PictureTester
         swan.edgeDetection(10);
         swan.explore();
     }
-
+    public static void testEdgeDetectionTopToBottom(){
+        Picture swan = new Picture("swan.jpg");
+        swan.edgeDetectionTopToBottom(10);
+        swan.explore();
+    }
+    public static void testMyEdgeDetection(){
+        Picture swan = new Picture ("swan.jpg");
+        swan.myEdgeDetection(10);
+        swan.explore();
+    }
     /** Main method for testing.  Every class can have a main
      * method in Java */
     public static void main(String[] args)
